@@ -13,10 +13,10 @@ let state = {
 function componentDidMount() {
   navigator.geolocation.getCurrentPosition(
     position => {
-      this.fetchWeather(position.coords.latitude, position.coords.longitude);
+      fetchWeather(position.coords.latitude, position.coords.longitude);
     },
     error => {
-      this.setState({
+      state.setState({
         error: 'Error Gettig Weather Condtions'
       });
     }
@@ -30,17 +30,30 @@ function fetchWeather(lat = 25, lon = 25) {
     .then(res => res.json())
     .then(json => {
       console.log(json);
+      state = {
+        temperature: json.main.temp,
+        weatherCondition: json.weather[0].main,
+        isLoading: false
+      }
     });
 }
 
 export default function App() {
-  let {isLoading} = state
+  let state = {
+    isLoading: true,
+    temperature: 0,
+    weatherCondition: null,
+    error: null
+  };
+
+  componentDidMount();
+  console.log(state);
   return (
     <View style={styles.container}>
-      {isLoading ? (
+      {state.isLoading ? (
         <Text>Fetching</Text>
       ) : (
-        <Weather/>
+        <Weather weather={weather} temp={temperature}/>
       )}
       <StatusBar style="auto" />
     </View>
